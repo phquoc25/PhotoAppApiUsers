@@ -2,6 +2,7 @@ package com.qph.springmicorservices.photoapp.api.users.ui.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -10,6 +11,7 @@ import java.io.Serializable;
 
 @Setter
 @Getter
+@Accessors(chain = true)
 public class UserRequestModel implements Serializable {
     private static final long serialVersionUID = 536260459766273973L;
 
