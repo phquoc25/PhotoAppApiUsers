@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -24,13 +25,16 @@ public class UserServiceImplTest {
     @Mock
     private UserIdGeneratorImpl userIdGenerator;
 
+    @Mock
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     private ModelMapper modelMapper;
 
     @BeforeEach
     void setUp() {
         modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        userService = new UserServiceImpl(userIdGenerator, userRepository, modelMapper);
+        userService = new UserServiceImpl(userIdGenerator, bCryptPasswordEncoder, userRepository, modelMapper);
     }
 
     @Test
