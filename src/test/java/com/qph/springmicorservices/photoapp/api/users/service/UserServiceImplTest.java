@@ -18,6 +18,7 @@ import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceImplTest {
+    private static final String ENCRYPTED_PASS = "encrypted pass";
     private UserService userService;
 
     @Mock
@@ -44,15 +45,20 @@ public class UserServiceImplTest {
         String firstName = "first name";
         String lastName = "last name";
         String email = "email@email.com";
+        String password = "password";
         UserDto userDto = new UserDto()
                 .setFirstName(firstName)
                 .setLastName(lastName)
+                .setPassword(password)
                 .setEmail(email);
 
         String userId = "userid-sfdsf";
-        UserEntity userEntity = modelMapper.map(userDto, UserEntity.class);
-        userEntity.setUserId(userId);
-        userEntity.setEncryptedPassword("encrypted pass");
+        UserEntity userEntity = new UserEntity()
+                .setFirstName(firstName)
+                .setLastName(lastName)
+                .setEmail(email)
+                .setUserId(userId)
+                .setEncryptedPassword(ENCRYPTED_PASS);
 
         UserEntity createdUserEntity = new UserEntity();
         modelMapper.map(userEntity, createdUserEntity);
@@ -60,14 +66,16 @@ public class UserServiceImplTest {
         createdUserEntity.setId(id);
 
         given(userIdGenerator.generateId()).willReturn(userId);
+        given(bCryptPasswordEncoder.encode(password)).willReturn(ENCRYPTED_PASS);
         given(userRepository.save(userEntity)).willReturn(createdUserEntity);
         // WHEN
         UserDto createdUser = userService.createUser(userDto);
         // THEN
         then(userIdGenerator).should().generateId();
+        then(bCryptPasswordEncoder).should().encode(password);
         then(userRepository).should().save(userEntity);
-        assertThat(createdUser).isEqualToComparingFieldByField(userDto);
+        assertThat(createdUser).isEqualToIgnoringGivenFields(userDto, "password", "userId", "encryptedPassword");
         assertThat(createdUser.getUserId()).isEqualTo(userId);
-        assertThat(createdUser.getEncryptedPassword()).isEqualTo("encrypted pass");
+        assertThat(createdUser.getEncryptedPassword()).isEqualTo(ENCRYPTED_PASS);
     }
 }

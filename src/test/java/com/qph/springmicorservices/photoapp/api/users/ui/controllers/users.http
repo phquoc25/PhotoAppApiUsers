@@ -1,0 +1,17 @@
+@hostname = localhost
+@port = 8011
+@contentType = application/json
+
+###
+GET http://{{hostname}}:{{port}}/user-ws/users/status/check
+
+###
+POST http://{{hostname}}:{{port}}/user-ws/users
+content-type: {{contentType}}
+
+{
+    "firstName": "Quoc",
+    "lastName": "Phan",
+    "email": "toto@gmail.com",
+    "password": "123456789"
+}
